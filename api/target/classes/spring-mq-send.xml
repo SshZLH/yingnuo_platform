@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+       http://www.springframework.org/schema/rabbit
+       http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd">
+					
+	<!-- Rabbit MQ -->
+	<!-- 连接服务配置  -->
+   	<rabbit:connection-factory id="connectionFactory" addresses="${rabbitMq.address}" username="${rabbitMq.username}" password="${rabbitMq.password}" />
+   	<rabbit:admin connection-factory="connectionFactory"/>
+   	
+   	<rabbit:queue id="HardwareGate_2ControlPanelUpquene" durable="true" auto-delete="false" exclusive="false" name="HardwareGate_2ControlPanelUpquene"/>
+	<!-- exchange queue binging key 绑定 -->
+    <rabbit:direct-exchange name="my-mq-exchange" durable="true" auto-delete="false" id="my-mq-exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="HardwareGate_2ControlPanelUpquene" key="HardwareGate_2ControlPanelUpquene_key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    <!-- spring template声明-->
+    <rabbit:template exchange="my-mq-exchange" id="amqpTemplate"  connection-factory="connectionFactory" />   
+	
+</beans>
